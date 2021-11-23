@@ -3,6 +3,7 @@ import glob
 import importlib
 import os
 import sys
+import wandb
 
 import numpy as np
 import torch as th
@@ -177,6 +178,8 @@ def main():  # noqa: C901
 
     model = ALGOS[algo].load(model_path, env=env, custom_objects=custom_objects, **kwargs)
 
+
+    wandb.init(project='rltesting123', monitor_gym=True)
     obs = env.reset()
 
     # Deterministic by default except for atari games
@@ -194,7 +197,7 @@ def main():  # noqa: C901
             action, state = model.predict(obs, state=state, deterministic=deterministic)
             obs, reward, done, infos = env.step(action)
             if not args.no_render:
-                env.render("human")
+                env.render()
 
             episode_reward += reward[0]
             ep_len += 1
